@@ -104,6 +104,10 @@ PLUGIN_SQUEEZESONIC_REFRESH
 	EN	Refresh lists
 	FR	Rafraichir les listes
 
+PLUGIN_SQUEEZESONIC_PREFS_AUTH_TYPE
+	EN	Authentication Type
+	FR	Type d'authentification
+
 PLUGIN_SQUEEZESONIC_TRANSCODE_AUTO_NOT_DETERMINED
 	EN	Cannot determine Auto transcoding format because Subsonic server does not send transcodedSuffix. Fallback to raw format.
 	FR	Impossible de déterminer le format de transcodage Auto car le serveur Subsonic n'envoie pas transcodedSuffix. Pas de transcodage utilisé.
