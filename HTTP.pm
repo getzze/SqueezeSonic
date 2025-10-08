@@ -2,7 +2,7 @@ package Plugins::SqueezeSonic::HTTP;
 use base qw(Plugins::SqueezeSonic::ProtocolHandler Slim::Player::Protocols::HTTP);
 
 use Slim::Utils::Log;
-my $log   = logger('plugin.squeezesonic');
+my $log = logger('plugin.squeezesonic');
 
 sub new {
         my $class  = shift;
@@ -26,6 +26,6 @@ sub new {
 }
 
 sub canDirectStreamSong {
-	return 0;
+        return 0;
 }
 1;

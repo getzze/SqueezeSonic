@@ -19,7 +19,7 @@ sub scanUrl {
 
 sub getFormatForURL {
 	my ($class, $url) = @_;
-	
+
 	my ($format) = $url =~ m{\.(.+?)$};
 
 	if ($format =~ /^flac$/) {
@@ -33,7 +33,7 @@ sub parseDirectHeaders {
 	my $client  = shift || return;
 	my $url     = shift;
 	my @headers = @_;
-	
+
 	if ( blessed($url) ) {
 		$url = $url->url;
 	}
@@ -71,7 +71,7 @@ sub getMetadataFor {
 	Plugins::SqueezeSonic::API->get(sub {
 		my $track = shift;
 		my $bitrate;
-		
+
 		my ($format) = $url =~ m{\.(.+?)$};
 
 		my ($bitrate) = ($url =~ m{-(.*)\.});
@@ -98,7 +98,7 @@ sub getMetadataFor {
 
 sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
-	
+
 	my $url = $song->currentTrack()->url;
 	my ($id) = $url =~ m{^sonics?://(.+?)$};
 	my ($tid) = $url =~ m{^sonics?://(.*)-};;

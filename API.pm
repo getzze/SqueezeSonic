@@ -38,7 +38,7 @@ sub submitQuery {
 		sub {
 			my $response = shift;
 			my $result = eval { from_json($response->content) };
-			
+
 			$result ||= {};
 
 			$cb->($result);
@@ -53,7 +53,7 @@ sub submitQuery {
 
 sub cacheGet {
 	my ($item) = @_ ;
-		
+
 	return $cache->get($item);
 
 }
@@ -96,4 +96,3 @@ sub get {
 }
 
 1;
-
