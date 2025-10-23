@@ -273,15 +273,15 @@ sub _formatPodcast {
 	my ($podcast) = @_;
 
 	my $formated = {
-			name  => $podcast->{title},
-			image => $podcast->{image},
-			line1 => $podcast->{description},
-			type  => 'playlist',
-			url   => \&podcast,
-			passthrough => [{
-              			podcast_id => $podcast->{id},
-                		}],
-			};
+		name  => $podcast->{title},
+		image => $podcast->{image},
+		line1 => $podcast->{description},
+		type  => 'playlist',
+		url   => \&podcast,
+		passthrough => [{
+			podcast_id => $podcast->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -323,14 +323,14 @@ sub _formatPlaylist {
 	my ($playlist) = @_;
 
 	my $formated = {
-			name  => $playlist->{name} . ($playlist->{comment} ? ' - ' : ''),
-			image => $playlist->{image},
-			type  => 'playlist',
-			url   => \&playlist,
-			passthrough => [{
-              			playlist_id => $playlist->{id},
-                		}],
-			};
+		name  => $playlist->{name} . ($playlist->{comment} ? ' - ' : ''),
+		image => $playlist->{image},
+		type  => 'playlist',
+		url   => \&playlist,
+		passthrough => [{
+			playlist_id => $playlist->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -382,16 +382,24 @@ sub albumList {
 sub _formatAlbum {
 	my ($album) = @_;
 
+	my $line1 = $album->{name};
+	my $line2 = '';
+	if ( $prefs->get('showmore') ) {
+		$line1 = $album->{year} . ($album->{year} && $album->{name} ? ' - ' : '') . $album->{name};
+		$line2 = $album->{artist};
+	}
+
 	my $formated = {
-			name  => $album->{artist} . ($album->{artist} && $album->{name} ? ' - ' : '') . $album->{name},
-			image => $album->{image},
-			line1 => $album->{name},
-			type  => 'playlist',
-			url   => \&album,
-			passthrough => [{
-              			album_id => $album->{id},
-                		}],
-			};
+		name  => $album->{artist} . ($album->{artist} && $album->{name} ? ' - ' : '') . $album->{name},
+		image => $album->{image},
+		line1 => $line1,
+		line2 => $line2,
+		type  => 'playlist',
+		url   => \&album,
+		passthrough => [{
+			album_id => $album->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -411,17 +419,17 @@ sub album {
 }
 
 sub _formatTrack {
-        my ($track) = @_;
+	my ($track) = @_;
 
 	my $formated = {
-        	        name  => $track->{title} . ($track->{artist} ? " - $track->{artist}" : ''),
-                	line1 => $track->{title},
-                	line2 => $track->{artist} . ($track->{artist} && $track->{album} ? ' - ' : '') . $track->{album},
-                	image => $track->{image},
-                	play  => $track->{play},
-                	on_select => 'play',
-                	playall   => 1,
-        };
+		name      => $track->{title} . ($track->{artist} ? " - $track->{artist}" : ''),
+		line1     => (($prefs->get('showmore') && $track->{track}) ? $track->{track} . '. ' : '') . $track->{title},
+		line2     => $track->{artist} . ($track->{artist} && $track->{album} ? ' - ' : '') . $track->{album},
+		image     => $track->{image},
+		play      => $track->{play},
+		on_select => 'play',
+		playall   => 1,
+	};
 	return $formated;
 }
 
@@ -590,16 +598,16 @@ sub artist {
 }
 
 sub _formatArtist {
-        my ($artist) = @_;
+	my ($artist) = @_;
 
-        my $formated = {
-                name  => $artist->{name},
+	my $formated = {
+		name  => $artist->{name},
 		image => $artist->{image},
-                	url   => \&artist,
-                	passthrough => [{
-                        	artistId  => $artist->{id},
-                	}],
-        };
+		url   => \&artist,
+		passthrough => [{
+			artistId  => $artist->{id},
+		}],
+	};
 	return $formated;
 }
 
