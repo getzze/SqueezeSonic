@@ -28,12 +28,12 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 sub initPlugin {
 	my $class = shift;
-	
+
 	if (main::WEBUI){
 		require Plugins::SqueezeSonic::Settings;
 		Plugins::SqueezeSonic::Settings->new();
 	};
-	
+
 	Slim::Player::ProtocolHandlers->registerHandler(
 		sonic => 'Plugins::SqueezeSonic::HTTP'
 	);
@@ -41,7 +41,7 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		sonics => 'Plugins::SqueezeSonic::HTTPS'
 	);
-	
+
 	Slim::Menu::TrackInfo->registerInfoProvider( squeezesonic => (
 		func  => \&songPlus,
 	) );
@@ -49,7 +49,7 @@ sub initPlugin {
 	Slim::Menu::GlobalSearch->registerInfoProvider( squeezesonic => (
 		func => \&search,
 	) );
-	
+
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
 		tag    => 'squeezesonic',
@@ -63,7 +63,7 @@ sub getDisplayName { 'PLUGIN_SQUEEZESONIC' }
 
 sub handleFeed {
 	my ($client, $cb, $args) = @_;
-	
+
 	my $params = $args->{params};
 
 	my $items;
@@ -100,7 +100,7 @@ sub handleFeed {
 						name  => cstring($client, 'PLUGIN_SQUEEZESONIC_GENRES'),
 						url  => \&genresList,
 						image => 'html/images/genres.png',
-				},{		
+				},{
 						name => cstring($client, 'PLUGIN_SQUEEZESONIC_INDEX'),
 						url  => \&artistsList,
 						image => 'html/images/artists.png',
@@ -108,11 +108,11 @@ sub handleFeed {
 						name  => cstring($client, 'PLUGIN_SQUEEZESONIC_PLAYLISTS'),
 						url  => \&playlistsList,
 						image => 'html/images/playlists.png',
-				},{		
+				},{
 						name  => cstring($client, 'PLUGIN_SQUEEZESONIC_PODCASTS'),
 						url  => \&podcastsList,
 						image => 'plugins/SqueezeSonic/html/images/podcasts.png',
-				},{		
+				},{
 						name  => cstring($client, 'PLUGIN_SQUEEZESONIC_REFRESH'),
 						url  => \&cleanup,
 						image => 'plugins/SqueezeSonic/html/images/refresh.png',
@@ -149,7 +149,7 @@ sub songPlus {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 
 	my $items;
-	
+
 	if ($remoteMeta->{artistId}){
 		push @$items, {
                 	name => $remoteMeta->{artist},
@@ -159,7 +159,7 @@ sub songPlus {
                         }]
 		}
 	}
-	
+
 	push @$items, {
                         name => cstring($client, 'PLUGIN_SQUEEZESONIC_SEARCH', $remoteMeta->{artist}),
                         url  => \&search,
@@ -179,7 +179,7 @@ sub songPlus {
                                 q => $remoteMeta->{title},
                         }]
         };
-	
+
         my $info = [{
                         name  => cstring($client, 'PLUGIN_SQUEEZESONIC_PLUS'),
                         items => $items
@@ -190,7 +190,7 @@ sub songPlus {
 
 sub search {
 	my ($client, $cb, $params, $args) = @_;
-	
+
 	$args ||= {};
 	$params->{search} ||= $args->{q};
 	my $search = uri_escape_utf8(lc($params->{search}));
@@ -199,11 +199,11 @@ sub search {
 
 	Plugins::SqueezeSonic::API->submitQuery(sub {
 		my $results = shift;
-		
+
 		if (!$results) {
 			$cb->();
 		}
-		
+
 		my $albums = [];
 		foreach my $album ( @{$results->{'subsonic-response'}->{searchResult3}->{album}} ) {
 			$album->{image} = _getImage($album->{coverArt});
@@ -220,9 +220,9 @@ sub search {
                 foreach my $track ( @{$results->{'subsonic-response'}->{searchResult3}->{song}}) {
                         push @$tracks, _formatTrack(_cacheTrack($track));
 		}
-		
+
 		my $items = [];
-		
+
 		push @$items, {
 			name  => cstring($client, 'ALBUMS'),
 			items => $albums,
@@ -245,7 +245,7 @@ sub search {
 			$items = $items->[0]->{items};
 		}
 
-		$cb->( { 
+		$cb->( {
 			items => $items
 		} );
 	}, $query);
@@ -258,7 +258,7 @@ sub podcastsList {
 	Plugins::SqueezeSonic::API->get(sub {
        		my $podcastList = shift;
 		my $podcasts = [];
-		
+
 		foreach my $podcast ( @{$podcastList->{'subsonic-response'}->{podcasts}->{channel}} ) {
 			$podcast->{image} = _getImage($podcast->{coverArt});
 			push @$podcasts, _formatPodcast($podcast);
@@ -273,15 +273,15 @@ sub _formatPodcast {
 	my ($podcast) = @_;
 
 	my $formated = {
-			name  => $podcast->{title}, 
-			image => $podcast->{image},
-			line1 => $podcast->{description},
-			type  => 'playlist',
-			url   => \&podcast,
-			passthrough => [{
-              			podcast_id => $podcast->{id},
-                		}],
-			};
+		name  => $podcast->{title},
+		image => $podcast->{image},
+		line1 => $podcast->{description},
+		type  => 'playlist',
+		url   => \&podcast,
+		passthrough => [{
+			podcast_id => $podcast->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -323,14 +323,14 @@ sub _formatPlaylist {
 	my ($playlist) = @_;
 
 	my $formated = {
-			name  => $playlist->{name} . ($playlist->{comment} ? ' - ' : ''),
-			image => $playlist->{image},
-			type  => 'playlist',
-			url   => \&playlist,
-			passthrough => [{
-              			playlist_id => $playlist->{id},
-                		}],
-			};
+		name  => $playlist->{name} . ($playlist->{comment} ? ' - ' : ''),
+		image => $playlist->{image},
+		type  => 'playlist',
+		url   => \&playlist,
+		passthrough => [{
+			playlist_id => $playlist->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -359,11 +359,11 @@ sub albumList {
         	$id = $args->{genre};
                	$pa = "type=byGenre&genre=" . $args->{genre} . "&size=" . $prefs->get('slists');
 		$img = 'html/images/albums.png';
-        } else { 
+        } else {
 	        $id = $args->{mode};
         	$pa = "type=" .  $args->{mode} . "&size=" . $prefs->get('slists');
 		$img = 'plugins/SqueezeSonic/html/images/random.png' if ($args->{mode} eq "random");
-	} 
+	}
 
 	Plugins::SqueezeSonic::API->get(sub {
        		my $albumList = shift;
@@ -382,16 +382,24 @@ sub albumList {
 sub _formatAlbum {
 	my ($album) = @_;
 
+	my $line1 = $album->{name};
+	my $line2 = '';
+	if ( $prefs->get('showmore') ) {
+		$line1 = $album->{year} . ($album->{year} && $album->{name} ? ' - ' : '') . $album->{name};
+		$line2 = $album->{artist};
+	}
+
 	my $formated = {
-			name  => $album->{artist} . ($album->{artist} && $album->{name} ? ' - ' : '') . $album->{name},
-			image => $album->{image},
-			line1 => $album->{name},
-			type  => 'playlist',
-			url   => \&album,
-			passthrough => [{
-              			album_id => $album->{id},
-                		}],
-			};
+		name  => $album->{artist} . ($album->{artist} && $album->{name} ? ' - ' : '') . $album->{name},
+		image => $album->{image},
+		line1 => $line1,
+		line2 => $line2,
+		type  => 'playlist',
+		url   => \&album,
+		passthrough => [{
+			album_id => $album->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -411,17 +419,17 @@ sub album {
 }
 
 sub _formatTrack {
-        my ($track) = @_;
+	my ($track) = @_;
 
 	my $formated = {
-        	        name  => $track->{title} . ($track->{artist} ? " - $track->{artist}" : ''),
-                	line1 => $track->{title},
-                	line2 => $track->{artist} . ($track->{artist} && $track->{album} ? ' - ' : '') . $track->{album},
-                	image => $track->{image},
-                	play  => $track->{play},
-                	on_select => 'play',
-                	playall   => 1,
-        };
+		name      => $track->{title} . ($track->{artist} ? " - $track->{artist}" : ''),
+		line1     => (($prefs->get('showmore') && $track->{track}) ? $track->{track} . '. ' : '') . $track->{title},
+		line2     => $track->{artist} . ($track->{artist} && $track->{album} ? ' - ' : '') . $track->{album},
+		image     => $track->{image},
+		play      => $track->{play},
+		on_select => 'play',
+		playall   => 1,
+	};
 	return $formated;
 }
 
@@ -532,7 +540,7 @@ sub genre {
 
 sub startRadioGenre {
         my ($client, $cb, $params, $args) = @_;
-	
+
         Plugins::SqueezeSonic::API->get(sub {
                 my $radio = shift;
                 my $tracks =[];
@@ -550,13 +558,13 @@ sub artist {
 
 	Plugins::SqueezeSonic::API->get(sub {
 		my $artistInfo2 = shift;
-		
+
 		my $items = [{
 			name  => cstring($client, 'ALBUMS'),
 			url   => \&artistAlbums,
 			image => 'html/images/albums.png',
 			passthrough => [{
-				artistId => $args->{artistId}, 
+				artistId => $args->{artistId},
 			}]
 		},{
 			name => cstring($client, 'PLUGIN_SQUEEZESONIC_STARTRADIO'),
@@ -567,9 +575,9 @@ sub artist {
                         }]
 		}];
 
-		my $imageLarge = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{largeImageUrl} || '';		
-		my $imageMedium = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{mediumImageUrl} || '';		
-		my $imageSmall = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{smallImageUrl} || '';		
+		my $imageLarge = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{largeImageUrl} || '';
+		my $imageMedium = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{mediumImageUrl} || '';
+		my $imageSmall = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{smallImageUrl} || '';
 
 		my $img = $imageLarge || $imageMedium || $imageSmall || 'html/images/artists.png';
 		my $bio = $artistInfo2->{'subsonic-response'}->{artistInfo2}->{biography};
@@ -590,16 +598,16 @@ sub artist {
 }
 
 sub _formatArtist {
-        my ($artist) = @_;
+	my ($artist) = @_;
 
-        my $formated = {
-                name  => $artist->{name},
+	my $formated = {
+		name  => $artist->{name},
 		image => $artist->{image},
-                	url   => \&artist,
-                	passthrough => [{
-                        	artistId  => $artist->{id},
-                	}],
-        };
+		url   => \&artist,
+		passthrough => [{
+			artistId  => $artist->{id},
+		}],
+	};
 	return $formated;
 }
 
@@ -663,7 +671,7 @@ sub artistAlbums {
                 $cb->({
                         items => $albums
                 });
-	},'getArtist',$args->{artistId},$prefs->get('tmusic'),"id=" . $args->{artistId});               
+	},'getArtist',$args->{artistId},$prefs->get('tmusic'),"id=" . $args->{artistId});
 }
 
 sub _getImage {
